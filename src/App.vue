@@ -24,7 +24,8 @@
       <b-input type="text" v-model="imgSetting.suffix" />
       <b-button class="mx-2" size="sm" variant="danger" @click="imgSettings.splice(i,1)">Remove</b-button>
     </b-input-group>
-    <div class="text-center mt-3">
+    <div class="text-center mt-3 d-flex justify-content-center">
+      <!-- <b-form-checkbox class="mx-5" id="check" v-model="convertToJPEG">Convert To JPEG</b-form-checkbox> -->
       <b-button @click="addSize" variant="primary" size="sm" class="text-center">Add output size +</b-button>
     </div>
     <div class="images d-flex align-items-center justify-content-center m-5">
@@ -42,6 +43,7 @@ export default {
   name: "app",
   data() {
     return {
+      convertToJPEG: false,
       twoSecondToggle: false,
       zip: new JSZip(),
       imgSettings: [
@@ -69,7 +71,7 @@ export default {
     };
   },
   methods: {
-    async compressImage({ target }) {
+    compressImage({ target }) {
       const oldFiles = target.files;
       let count = 0;
       let numImages = this.imgSettings.length * oldFiles.length;
@@ -79,7 +81,8 @@ export default {
           new Compressor(oldFiles[i], {
             maxWidth: imgSetting.maxWidth,
             maxHeight: imgSetting.maxHeight,
-            convertSize: Infinity,
+            // convertSize: this.convertToJPEG ? 5000 : Infinity,
+            convertSize: 10,
 
             success: result => {
               const [filename, extension] = oldFiles[i].name.split(".");
@@ -88,7 +91,9 @@ export default {
               this.zip.file(newName, result);
               console.log({ newName, result });
               count++;
-              if (count === numImages) this.exportZip();
+              if (count === numImages) {
+                this.exportZip();
+              }
             }
           });
         });
@@ -110,6 +115,9 @@ export default {
     }
   },
   mounted() {
+    setTimeout(() => {
+      this.twoSecondToggle = !this.twoSecondToggle;
+    }, 0);
     setInterval(() => {
       this.twoSecondToggle = !this.twoSecondToggle;
     }, 2000);
