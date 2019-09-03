@@ -82,7 +82,7 @@ export default {
             maxWidth: imgSetting.maxWidth,
             maxHeight: imgSetting.maxHeight,
             // convertSize: this.convertToJPEG ? 5000 : Infinity,
-            convertSize: 10,
+            convertSize: Infinity,
 
             success: result => {
               const [filename, extension] = oldFiles[i].name.split(".");
